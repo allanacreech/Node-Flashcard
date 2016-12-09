@@ -4,97 +4,102 @@ var inquirer = require("inquirer");
 //require fs
 var fs = require("fs");
 
+//Empty var to store programmers data
+var answers = [];
+
+//var to Prompt Programmers
+inquirer.prompt ([
+    {
+        name: "question",
+        message: "Enter Question",
+        type: "input"
+    },
+    {
+        name: "answer",
+        message: "Enter Answer",
+        type: "input"
+    },
+    {
+        name: "answercloze",
+        message: "Enter Cloze",
+        type: "input"
+    },
+    {
+        name: "answertext",
+        message: "Enter Text",
+        type: "input"
+    }
+
+]).then(handleUserResponse);
+
+
+
 //require text file
-var text = require("text.txt");
+// var text = require("text.txt");
 
 //third input field accept front and back arguments
-var BasicFlashcard = process.argv[2];
-
-//third input field accept text and cloze arguments
-var ClonzeFlashcard = process.argv[3];
-
 //We will create a switch-case statement.
 //The switch-case will direct which functions get run.
+function BasicFlashcard(front, back){
+this.front = front;
+this.back = back;
 
-switch (BasicFlashcard){
-    case "front":
-    break;
-
-    case "back":
-    break;
+//showing the back answer
+this.showback = function (){
+    console.log(this.back);
 }
-
-switch (ClonzeFlashcard){
-    case "text":
-    break;
-
-    case "cloze":
-    break;
+this.showfront = function(){
+    console.log(this.front);
 }
+};
+
+//third input field accept text and cloze arguments
+//We will create a switch-case statement.
+//The switch-case will direct which functions get run.
+function ClonzeFlashcard (text, cloze){
+this.text = text;
+this.cloze = cloze;
+
+this.showtext = function(){
+    console.log(this.text);
+}
+this.showcloze = function(){
+    console.log(this.cloze);
+}
+};
+
+//This is creating the list of questions and Answers for the flash cards
+var basic = new BasicFlashcard( "What was the name of the first US president?", "George Washington");
+ 
+
+
+
+//Read user data
+// fs.readFile('text.txt','utf8', readFileResult);
+ 
+
+//Handles the user answer to prompts
+function handleUserResponse(answer){
+   // console.log(BasicFlashcard);
+    // console.log("Your Answer: " + result[0], "Correct Answer: " + inquirer.back);
+    //print method is to show object
+    var newAnswer = new BasicFlashcard (answer.question, answer.answer);
+    newAnswer.showback();
+    answers.push(newAnswer);
+
+    var newCloze = new ClonzeFlashcard (answer.answertext, answer.answercloze);
+    newCloze.showtext();
+    answers.push(newCloze);
+
+      // We will add the value to the bank file.
+  fs.appendFile("text.txt", answer.question + " " + answer.answer+"\n", appendError);
+  fs.appendFile("text.txt", answer.answertext + " " + answer.answercloze+"\n", appendError);
 
 //function to find errors
 function appendError(err){
     if(err){
         console.log(err);
     }
+    
 }
-
-//Flash card prompts to user
-inquirer.prompt ([
-    {
-        front: "What was the name of the first US president?",
-        back: "George Washington"
-    },
-    {
-        front: "What was the name of the second US president?",
-        back: "John Adams"
-    },
-    {
-        front: "What was the name of the third US president?",
-        back: "Thomas Jefferson"
-    },
-    {
-        front: "What was the name of the fourth US president?",
-        back: "James Madison"
-    },
-    {
-        front: "What was the name of the fifth US president?",
-        back: "James Monre"
-    },
-    {
-        front: "What was the name of the sixth US president?",
-        back: "John Quincy Adams"
-    },
-    {
-        front: "What was the name of the seventh US president?",
-        back: "Andrew Jackson"
-    },
-    {
-        front: "What was the name of the eight US president?",
-        back: "Marin Van Buren"
-    },
-    {
-        front: "What was the name of the ninth US president?",
-        back: "William Henry Harris"
-    }   
-    ,
-    {
-        front: "What was the name of the tenth US president?",
-        back: "John Tyler"
-    }
-   
-]);
-
-//Read user data
-fs.readFile('text.txt','utf8', readFileResult);
- 
-
-//Handles the user answer to prompts
-var handleUserResponse = function(answer){
-    console.log(BasicFlashcard);
-    console.log("Your Answer: " + result[0], "Correct Answer: " + inquirer.back);
-    //print method is to show object
-    var newAnswer = new BasicFlashcard (answer.front, answer.back)
-    newAnswer.printInfo();
-    ansers.push(newAnser);
 };
