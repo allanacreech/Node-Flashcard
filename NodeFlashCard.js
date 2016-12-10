@@ -1,46 +1,21 @@
+"use strict"
 //Require Node NPM
 var inquirer = require("inquirer");
 
 //require fs
 var fs = require("fs");
 
+//require objets
+// var BasicFlashCard = require("./basicFlashCard.js");
+// var ClozeFlashCard = require("./clozeFlashCard.js");
+
 //Empty var to store programmers data
 var answers = [];
 
-//var to Prompt Programmers
-inquirer.prompt ([
-    {
-        name: "question",
-        message: "Enter Question",
-        type: "input"
-    },
-    {
-        name: "answer",
-        message: "Enter Answer",
-        type: "input"
-    },
-    {
-        name: "answercloze",
-        message: "Enter Cloze",
-        type: "input"
-    },
-    {
-        name: "answertext",
-        message: "Enter Text",
-        type: "input"
-    }
-
-]).then(handleUserResponse);
-
-
-
-//require text file
-// var text = require("text.txt");
 
 //third input field accept front and back arguments
-//We will create a switch-case statement.
-//The switch-case will direct which functions get run.
-function BasicFlashcard(front, back){
+
+var BasicFlashcard = function (front, back){
 this.front = front;
 this.back = back;
 
@@ -51,12 +26,16 @@ this.showback = function (){
 this.showfront = function(){
     console.log(this.front);
 }
+this.getfront = function(){
+    return this.front;
+}
+this.getback = function(){
+    return this.back;
+}
 };
 
-//third input field accept text and cloze arguments
-//We will create a switch-case statement.
-//The switch-case will direct which functions get run.
-function ClonzeFlashcard (text, cloze){
+
+var ClonzeFlashcard = function (text, cloze){
 this.text = text;
 this.cloze = cloze;
 
@@ -66,34 +45,107 @@ this.showtext = function(){
 this.showcloze = function(){
     console.log(this.cloze);
 }
+this.getshowtext = function(){
+    return this.text;
+}
+this.getcloze = function(){
+    return this.cloze;
+}
 };
 
-//This is creating the list of questions and Answers for the flash cards
-var basic = new BasicFlashcard( "What was the name of the first US president?", "George Washington");
- 
+inquirer.prompt([
+    {
+        type: "list",
+        name: "choice",
+        message: "What type of question will you make?",
+        choices: ["Basic", "Cloze"]
+    }
+]).then(processSelection);
+
+function processSelection(selection)
+{
+    if(selection.choice == "Basic"){
+        inquirer.prompt ([
+    
+    {
+        name: "question",
+        message: "Enter Question",
+        type: "input"
+    },
+    {
+        name: "answer",
+        message: "Enter Answer",
+        type: "input"
+    }
+
+]).then(handleBasicResponse);
+
+    }
+
+    else{
+inquirer.prompt ([
+       {
+        name: "answercloze",
+        message: "Enter Cloze",
+        type: "input"
+    },
+    {
+        name: "answertext",
+        message: "Enter Text",
+        type: "input"
+    }
+
+]).then(handleClozeResponse);
+
+    }
+//var to Prompt Programmers
+
+}
 
 
+
+//require text file
+// var text = require("text.txt");
 
 //Read user data
 // fs.readFile('text.txt','utf8', readFileResult);
  
 
 //Handles the user answer to prompts
-function handleUserResponse(answer){
-   // console.log(BasicFlashcard);
-    // console.log("Your Answer: " + result[0], "Correct Answer: " + inquirer.back);
+function handleBasicResponse(answer){
+  
+    
     //print method is to show object
-    var newAnswer = new BasicFlashcard (answer.question, answer.answer);
+
+     console.log(answer);
+           fs.appendFile("basic.txt", answer.question + "?" + answer.answer+"\n", appendError);
+
+var newAnswer = new BasicFlashcard (answer.question, answer.answer);
     newAnswer.showback();
     answers.push(newAnswer);
 
-    var newCloze = new ClonzeFlashcard (answer.answertext, answer.answercloze);
-    newCloze.showtext();
-    answers.push(newCloze);
+}
 
       // We will add the value to the bank file.
-  fs.appendFile("text.txt", answer.question + " " + answer.answer+"\n", appendError);
-  fs.appendFile("text.txt", answer.answertext + " " + answer.answercloze+"\n", appendError);
+
+
+    
+//Handles the user answer to prompts
+function handleClozeResponse(answer){
+  
+    
+    console.log(answer);
+       fs.appendFile("cloze.txt", answer.answertext + "?..." + answer.answercloze+"\n", appendError);
+
+    var newCloze = new ClonzeFlashcard (answer.answertext, answer.answercloze);
+    console.log(JSON.stringify(newCloze));
+    newCloze.showtext();
+    answers.push(newCloze);
+    
+
+      // We will add the value to the bank file.
+}
+
 
 //function to find errors
 function appendError(err){
@@ -102,4 +154,4 @@ function appendError(err){
     }
     
 }
-};
+
